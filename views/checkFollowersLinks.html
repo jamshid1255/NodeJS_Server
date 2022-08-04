@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        CCR Lab SNApp
+    </title>
+
+    <style>
+        .node {
+            cursor: pointer;
+        }
+        
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 3px;
+        }
+        
+        .node text {
+            font: 12px sans-serif;
+        }
+        
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 2px;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
+
+</head>
+
+<body>
+    <script src="https://cdn.zoomcharts-cloud.com/1/latest/zoomcharts.js"></script>
+    <content>
+
+
+        <div id="generallinks"></div>
+
+    </content>
+
+    <script>
+        getData();
+
+        var arrayofallusers = [];
+        var columns;
+        var userid = [];
+        var useridinterctwith = [];
+        var state = [];
+        var user_profile = {};
+
+        var numbeofArr = {};
+        var thisdataaaa = {
+            "nodes": [{
+                "id": "0",
+                "age": 23,
+                "name": "Bacha",
+                "loaded": true
+            }],
+            "links": []
+        };
+
+        async function getData() {
+            var personID = 0;
+            var personID2 = 0;
+            var myList = 0;
+            const table = data.split(/\r\n|\n|\r/).slice(1);
+            var tobecont = 10;
+            table.forEach(row => {
+                if (myList < 30) {
+                    myList++;
+                    columns = row.split(',');
+
+                    if (!(columns[0] == '')) {
+                        thisdataaaa["nodes"].push({
+                            "id": `${(columns[0])}`,
+                            "age": 20,
+                            "name": "Joe",
+                            "loaded": true,
+                            "style": {
+                                "fillColor": "green"
+                            }
+                        });
+                    }
+                    if (!(columns[1] == '')) {
+                        thisdataaaa["nodes"].push({
+                            "id": `${(columns[1])}`,
+                            "age": 20,
+                            "name": "Joe",
+                            "loaded": true,
+                            "style": {
+                                "fillColor": "green",
+                            }
+                        });
+                    }
+                    if (!(columns[0] == '')) {
+                        if (!(columns[1] == '')) {
+                            thisdataaaa["links"].push({
+                                "id": `${Number(tobecont)}p`,
+                                "from": `${(columns[0])}`,
+                                "to": `${(columns[1])}`,
+                                "type": "friend",
+                                "style": {
+                                    "fillColor": "green",
+                                }
+                            });
+                        }
+
+                    }
+                    tobecont++;
+                }
+            })
+
+            console.log(thisdataaaa);
+
+            const indexx = thisdataaaa.nodes.indexOf(thisdataaaa.nodes[0]);
+            if (indexx > -1) {
+                thisdataaaa.nodes.splice(indexx, 1);
+            }
+
+            const inde = thisdataaaa.nodes.indexOf(thisdataaaa.nodes[thisdataaaa.nodes.length - 1]);
+            if (inde > -1) {
+                thisdataaaa.nodes.splice(inde, 1);
+            }
+
+            noding(thisdataaaa);
+        }
+
+        function noding(arrival) {
+            var div = document.createElement('div');
+            chart = new NetChart({
+                style: {
+                    node: {
+                        display: "text"
+                    }
+                },
+                filters: {
+                    multilinkProcessor: function(linksData, fromNodeData, toNodeData) {
+                        return linksData[0];
+                    }
+                },
+                container: document.body.appendChild(div),
+
+                area: {
+                    height: null
+                },
+                data: {
+                    preloaded: arrival
+                },
+                // navigation: {
+                //     initialNodes: ["runner1256"],
+                //     mode: "focusnodes"
+                // },
+                // layout: {
+                //     mode: "hierarchy",
+                //     nodeSpacing: 45, // horizontal spacing between nodes
+                //     rowSpacing: 250 // vertical spacing between node rows in the hierarchy layout
+                // }
+            });
+        }
+    </script>
+
+</body>
+
+</html>

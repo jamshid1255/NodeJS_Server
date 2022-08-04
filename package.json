@@ -1,0 +1,45 @@
+{
+  "name": "connect",
+  "version": "1.0.0",
+  "description": "Connect your NodeJS app with twitter login using passport, express",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./bin/www"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "convert-array-to-csv": "^2.0.0",
+    "cookie-parser": "^1.4.5",
+    "csv-parse": "^5.0.4",
+    "csv-writer": "^1.6.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "get-twitter-followers": "^2.0.0",
+    "install": "^0.13.0",
+    "jade": "^1.11.0",
+    "jade-bootstrap": "^1.0.14",
+    "jsonwebtoken": "^8.5.1",
+    "login-with-twitter": "^1.2.2",
+    "mangodb": "^1.0.0",
+    "ml-random-forest": "^2.1.0",
+    "mongodb": "^3.7.3",
+    "mongoose": "^6.3.5",
+    "morgan": "^1.10.0",
+    "node-csv": "^0.1.2",
+    "nodemon": "^2.0.3",
+    "passport": "^0.4.1",
+    "passport-twitter": "^1.0.4",
+    "path": "^0.12.7",
+    "pg": "^8.7.3",
+    "regression": "^2.0.1",
+    "serve-favicon": "^2.5.0",
+    "session-memory-store": "^1.0.0",
+    "twitter": "^1.7.1"
+  },
+  "bin": {
+    "connect": "bin/www.js"
+  }
+}
