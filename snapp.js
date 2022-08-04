@@ -17,8 +17,8 @@ const bot = new Twit(config)
 
 var Twitter = require('twitter');
 
-var TWITTER_CONSUMER_KEY = "pXBMi2hEGrltcMc6r01DN17ac";
-var TWITTER_CONSUMER_SECRET = "kzCFIdrJDrNUf4l8Bl7G1FkTWny3CLtwqKQGqCx56bTkGB2HRE";
+var TWITTER_CONSUMER_KEY = "xxxxxxxxxxxxxxxxxxx";
+var TWITTER_CONSUMER_SECRET = "xxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 var callbackURL = "http://localhost:8000/auth/twitter/callback";
 
 var passport = require('passport');
@@ -342,10 +342,10 @@ var rankingbyRetweetListToApp = {
     }]
 }
 var tokens = {
-    consumer_key: 'pXBMi2hEGrltcMc6r01DN17ac',
-    consumer_secret: 'kzCFIdrJDrNUf4l8Bl7G1FkTWny3CLtwqKQGqCx56bTkGB2HRE',
-    access_token: '1497087080937451521-QFzvKHZt0riQ4PJsS5wWxeAlyBtNPL',
-    access_token_secret: 'Z8Dt2Ul9uTPO2EAFnGJSX0YnOuxCjMTkK2mNt9v4NF4pJ'
+    consumer_key: 'xxxxxxxxxxx',
+    consumer_secret: 'xxxxxxxxxxxxxxxxxxxxxxx',
+    access_token: 'xxxxxxxxxxxxxxxxxx-x',
+    access_token_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 };
 
 const TwitterAPis = async(getthis) => {
