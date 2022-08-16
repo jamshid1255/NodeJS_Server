@@ -8,7 +8,7 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const mangoose = require("mongoose");
 var app = express();
-
+const fetch = require('node-fetch');
 require('./bot')
 
 var Twit = require('twit')
@@ -17,9 +17,9 @@ const bot = new Twit(config)
 
 var Twitter = require('twitter');
 
-var TWITTER_CONSUMER_KEY = "xxxxxxxxxxxxxxxxxxx";
-var TWITTER_CONSUMER_SECRET = "xxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-var callbackURL = "http://localhost:8000/auth/twitter/callback";
+var TWITTER_CONSUMER_KEY = "xxx";
+var TWITTER_CONSUMER_SECRET = "xxx";
+var callbackURL = "xxx";
 
 var passport = require('passport');
 var TwitterStrategy = require('passport-twitter').Strategy;
@@ -342,10 +342,10 @@ var rankingbyRetweetListToApp = {
     }]
 }
 var tokens = {
-    consumer_key: 'xxxxxxxxxxx',
-    consumer_secret: 'xxxxxxxxxxxxxxxxxxxxxxx',
-    access_token: 'xxxxxxxxxxxxxxxxxx-x',
-    access_token_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+    consumer_key: 'xxx',
+    consumer_secret: 'xxx',
+    access_token: 'xxx',
+    access_token_secret: 'xxx'
 };
 
 const TwitterAPis = async(getthis) => {
@@ -664,12 +664,41 @@ app.post("/CyberbullyFollowersRanking", async(req, res) => {
             setTimeout(resolve, 6000, out);
         });
     };
-    getFile()
-        .then(data => {
-            // console.log(data);
-            return res.json({ msg: "You can access you report now  ready" });
-        })
-        .catch(err => console.error(err));
+
+
+    const UserInLoginValidation = async(username) => {
+        try {
+            client.query(`SELECT * FROM "tableforBadWords" WHERE "user" =$1 `, [username], (err, results) => {});
+            return true;
+        } catch (error) {
+            console.log("Query Error", error);
+            return false;
+        } finally {}
+    };
+
+    UserInLoginValidation(username).then(result => {
+        if (result) {
+            console.log('User exist...');
+            client.query(`SELECT * FROM "tableforBadWords"`, (err, res) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                for (let row of res.rows) {
+                    console.log(row);
+                }
+            });
+            return res.json({ msg: "You can access your report Directly" });
+        } else {
+            console.log("This email is New ");
+            getFile()
+                .then(data => {
+                    return res.json({ msg: "Your report is going to be ready now" });
+                })
+                .catch(err => console.error(err));
+
+        }
+    });
 });
 
 
@@ -712,7 +741,7 @@ app.post("/AppLoginScreen", async(req, res) => {
     console.log(email, password);
     const UserInLoginValidation = async(email, password) => {
         try {
-            await client.query(`SELECT * FROM "appRegisteredUsers" WHERE password = ?`, [password]);
+            await client.query(`SELECT * FROM "appRegisteredUsers" WHERE password =$1`, [password]);
             return true;
         } catch (error) {
             // console.error(error.stack);
@@ -738,15 +767,21 @@ app.post("/AppLoginScreen", async(req, res) => {
 
 
 
+
+// async function getData() {
+//     fetch('http://3.39.102.69:5000/get_user/TwitterDev')
+//         .then(response => response.json())
+//         .then(data => {
+//             console.log(data)
+//         })
+//         .catch(err => {
+//             console.log(err)
+//         })
+// }
+
+// getData();
+
 const { Console } = require('console');
-
-
-
-
-
-
-
-
 app.listen(8000, () => {
     console.log("Application started and Listening on port 8000");
 });
