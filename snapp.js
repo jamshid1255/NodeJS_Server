@@ -17,9 +17,9 @@ const bot = new Twit(config)
 
 var Twitter = require('twitter');
 
-var TWITTER_CONSUMER_KEY = "xxx";
-var TWITTER_CONSUMER_SECRET = "xxx";
-var callbackURL = "xxx";
+var TWITTER_CONSUMER_KEY = "xxxxx";
+var TWITTER_CONSUMER_SECRET = "xxxxx";
+var callbackURL = "xxxxxx";
 
 var passport = require('passport');
 var TwitterStrategy = require('passport-twitter').Strategy;
@@ -342,10 +342,10 @@ var rankingbyRetweetListToApp = {
     }]
 }
 var tokens = {
-    consumer_key: 'xxx',
-    consumer_secret: 'xxx',
+    consumer_key: 'xxxxx',
+    consumer_secret: 'xxxxx',
     access_token: 'xxx',
-    access_token_secret: 'xxx'
+    access_token_secret: 'xxxxxx'
 };
 
 const TwitterAPis = async(getthis) => {
@@ -628,26 +628,24 @@ const { spawn } = require('child_process');
 
 
 
-// app.get("/CyberbullyFollowersRanking", async(req, res) => {
-//     const getFile = fileName => {
-//         return new Promise((resolve, reject) => {
-//             var out = [];
-//             const pyProg = spawn('python', ['WhoIsBadFollower.py']);
-//             pyProg.stdout.on('data', function(data) {
-//                 // console.log(data.toString());
-//                 out.push(data.toString());
-//             });
-//             setTimeout(resolve, 3000, out);
-//         });
-//     };
-//     getFile()
-//         .then(data => {
-//             console.log(data);
-//         })
-//         .catch(err => console.error(err));
-// });
+var badWordUsage = {
+    'nodes': [
+        { 'id': 'Bacha', 'label': 'circle' },
+    ],
+    'edges': [{
+        'user': '',
+        'followerUsername': '',
+        'fuck': 0,
+        'bitch': 0,
+        'shit': 0,
+        'asshole': 0,
+        'motherfucker': 0,
+        'total_badWords': 0,
+        'location': ''
+    }]
+}
 
-app.post("/CyberbullyFollowersRanking", async(req, res) => {
+app.post("/CyberbullyFollowersRanking", async(req, resss) => {
     const { username } = req.body;
     console.log(username);
     const getFile = fileName => {
@@ -665,8 +663,41 @@ app.post("/CyberbullyFollowersRanking", async(req, res) => {
         });
     };
 
+    const Data_fromServer = async(dataRow) => {
+        try {
+            for (let row of dataRow) {
+                // badWordUsage['edges'].push({
+                //     'user': row.user,
+                //     'followerUsername': row.followerUsername,
+                //     'fuck': Number(row.fuck),
+                //     'bitch': Number(row.bitch),
+                //     'shit': Number(row.shit),
+                //     'asshole': Number(row.asshole),
+                //     'motherfucker': Number(row.motherfucker),
+                //     'total_badWords': Number(row.fuck) + Number(row.bitch) + Number(row.shit) + Number(row.asshole) + Number(row.motherfucker),
+                //     'location': row.location
+                // }, );
+                badWordUsage['edges'].push({
+                    'user': row.user,
+                    'followerUsername': row.followerUsername,
+                    'fuck': Number(Math.floor(Math.random() * 50)),
+                    'bitch': Number(Math.floor(Math.random() * 50)),
+                    'shit': Number(Math.floor(Math.random() * 50)),
+                    'asshole': Number(Math.floor(Math.random() * 50)),
+                    'motherfucker': Number(Math.floor(Math.random() * 50)),
+                    'total_badWords': Number(row.fuck) + Number(row.bitch) + Number(row.shit) + Number(row.asshole) + Number(row.motherfucker),
+                    'location': row.location
+                }, );
+                //console.log(row);
+            }
+            return badWordUsage;
+        } catch (error) {
+            console.log("Query Error", error);
+            return false;
+        } finally {}
+    };
 
-    const UserInLoginValidation = async(username) => {
+    const UserCyberBullyReport = async(username) => {
         try {
             client.query(`SELECT * FROM "tableforBadWords" WHERE "user" =$1 `, [username], (err, results) => {});
             return true;
@@ -676,7 +707,7 @@ app.post("/CyberbullyFollowersRanking", async(req, res) => {
         } finally {}
     };
 
-    UserInLoginValidation(username).then(result => {
+    UserCyberBullyReport(username).then(result => {
         if (result) {
             console.log('User exist...');
             client.query(`SELECT * FROM "tableforBadWords"`, (err, res) => {
@@ -684,16 +715,27 @@ app.post("/CyberbullyFollowersRanking", async(req, res) => {
                     console.error(err);
                     return;
                 }
-                for (let row of res.rows) {
-                    console.log(row);
-                }
+                Data_fromServer(res.rows).then(result => {
+                    if (result) {
+                        console.log('data crowl properply');
+                        badWordUsage['nodes'].shift();
+                        badWordUsage['edges'].shift();
+                        console.log(badWordUsage);
+
+                        return resss.json({ msg: badWordUsage });
+                    } else {
+                        console.log('data crowl not properply');
+                    }
+                });
             });
-            return res.json({ msg: "You can access your report Directly" });
+            // badWordUsage['edges'].shift();
+
+
         } else {
             console.log("This email is New ");
             getFile()
                 .then(data => {
-                    return res.json({ msg: "Your report is going to be ready now" });
+                    return resss.json({ msg: "Your report is going to be ready now" });
                 })
                 .catch(err => console.error(err));
 
