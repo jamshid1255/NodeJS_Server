@@ -17,9 +17,6 @@ const bot = new Twit(config)
 
 var Twitter = require('twitter');
 
-var TWITTER_CONSUMER_KEY = "xxxxx";
-var TWITTER_CONSUMER_SECRET = "xxxxx";
-var callbackURL = "xxxxxx";
 
 var passport = require('passport');
 var TwitterStrategy = require('passport-twitter').Strategy;
@@ -39,35 +36,10 @@ var getTwitterFollowers = require('get-twitter-followers');
 
 
 app.use(express.json({ extended: false }));
-var schema = new mangoose.Schema({ email: 'string', phone: 'string', password: 'string' });
-var User = mangoose.model('User', schema);
-var jwt = require('jsonwebtoken');
 
 
-app.post("/login", async(req, res) => {
-    const { email, password } = req.body;
-    //console.log(email, password);
-    var user = {
-        email: "bacha1255",
-        password: "123",
-        id: "12345678",
-    }
-    if (!user) {
-        return res.json({ msg: "No User found" });
-    } else if (user.email !== email) {
-        return res.json({ msg: "wrong email" });
-    } else if (user.password !== password) {
-        return res.json({ msg: "wrong password" });
-    } else {
-        var token = jwt.sign({ id: user.id }, 'password');
-        return res.json({ token: token });
-    }
-});
 
-var Twitschema = new mangoose.Schema({ userID: 'string', username: 'string' });
-var TwitUser = mangoose.model('TwitUser', Twitschema);
 
-////////////////////////////////Connection with database/////////////////////////
 const { Client } = require('pg');
 
 const client = new Client({
@@ -78,20 +50,6 @@ const client = new Client({
     port: 5432,
 })
 client.connect();
-
-// client.query('Select * from twitterregistered', (err, res) => {
-//     if (!err) {
-//         console.log(res.rows)
-//     } else {
-//         console.log(err.message);
-//     }
-//     client.end;
-// })
-
-////////////////////////////////Connection with database/////////////////////////
-
-
-
 
 
 
@@ -342,109 +300,17 @@ var rankingbyRetweetListToApp = {
     }]
 }
 var tokens = {
-    consumer_key: 'xxxxx',
+    consumer_key: 'xxxx',
     consumer_secret: 'xxxxx',
-    access_token: 'xxx',
+    access_token: 'xxx-xxx',
     access_token_secret: 'xxxxxx'
 };
 
-const TwitterAPis = async(getthis) => {
-    try {
-        var SizefoFollowers;
-        await getTwitterFollowers(tokens, getthis).then(followers => {
-            SizefoFollowers = followers;
-        });
-        return SizefoFollowers;
-    } catch (error) {
-        console.error(error.stack);
-        return false;
-    } finally {
-        // await client.end(); // closes connection
-    }
-};
 
 
 
-app.post("/twitterlogUserInfo", async(req, res) => {
-    const { userID, username } = req.body;
-    console.log(userID, username);
-    const CountFollowers = async() => {
-        try {
-            const { rows } = await client.query(`Select * from "userFollowertable"`);
-            var totalFollowers = 0;
-            //console.log(rows);
-            for (var i = 0; i < rows.length; i++) {
-                totalFollowers = totalFollowers + 1
-            }
-            return totalFollowers;
-        } catch (error) {
-            // console.error(error.stack);
-            return 0;
-        } finally {
-            // await client.end(); // closes connection
-        }
-    };
-    const insertUser = async() => {
-        try {
-            await client.query(
-                `INSERT INTO twitterregistered("Twitterid", "Twitterusername") VALUES(
-                    '${userID}', '${username}'
-                    )`); // sends queries
-            return true;
-        } catch (error) {
-            // console.error(error.stack);
-            return false;
-        } finally {
-            // await client.end(); // closes connection
-        }
-    };
-    const InsertFollowers = async(followers, userID, getthis) => {
-        try {
-            console.log("Store all infromation of followers in database")
-            for (var i = 0; i < followers.length; i++) {
-                console.log(followers[i]['screen_name']);
-                await client.query(
-                    `INSERT INTO "userFollowertable"("userTwitterid", "Twitterusername","followername","followerid",
-                    "followers_count","friends_count","retweeted_count","created_at","favourites_count",
-                    "statuses_count","verified_account","profile_image_url_https") 
-                    VALUES('${userID}', '${getthis}','${followers[i]['screen_name']}','${followers[i]['id_str']}',
-                    '${followers[i]['followers_count']}','${followers[i]['friends_count']}',
-                    '${followers[i]['status']['retweet_count']}','${followers[i]['created_at']}',
-                    '${followers[i]['favourites_count']}','${followers[i]['statuses_count']}',
-                    '${followers[i]['verified']}','${followers[i]['profile_image_url_https']}')`); // sends queries
-            }
-            return true;
-        } catch (error) {
-            // console.error(error.stack);
-            return false;
-        } finally {
-            // await client.end(); // closes connection
-        }
-    };
-    insertUser().then(result => {
-        if (result) {
-            console.log('User singup first time crawl followers...');
-            TwitterAPis(username).then(UserFollowerss => {
-                console.log('All Followers List Return ');
-                // console.log(UserFollowerss);
-                InsertFollowers(UserFollowerss, userID, username).then(finish => {
-                    if (finish) {
-                        CountFollowers().then(totalFollowers => {
-                            console.log("User have registred and followers stored in database show welcome page on smartphone");
-                            return res.json({ msg: "Welcome to Twitter Ranking", totalFollowr: totalFollowers });
-                        })
-                    }
-                })
 
-            });
-        } else {
-            CountFollowers().then(totalFollowers => {
-                console.log("User have already account redirect to welcome page on smartphone");
-                return res.json({ msg: "Welcome to Twitter Ranking", totalFollowr: totalFollowers });
-            })
-        }
-    });
-});
+
 
 
 async function RankingByRetweetsServer() {
@@ -628,26 +494,70 @@ const { spawn } = require('child_process');
 
 
 
-var badWordUsage = {
-    'nodes': [
-        { 'id': 'Bacha', 'label': 'circle' },
-    ],
-    'edges': [{
-        'user': '',
-        'followerUsername': '',
-        'fuck': 0,
-        'bitch': 0,
-        'shit': 0,
-        'asshole': 0,
-        'motherfucker': 0,
-        'total_badWords': 0,
-        'location': ''
-    }]
-}
+
+app.post("/deleteBadFollower", async(req, res) => {
+    const { userID, followerID } = req.body;
+    console.log(userID, followerID);
+    const deleteBadUserTweets = async(userID, followerID) => {
+        try {
+            await client.query(`DELETE FROM "myFollowersTweets" WHERE tweet_user_id = $1`, [followerID]); // sends queries
+            return true;
+        } catch (error) {
+            console.error(error.stack);
+            return false;
+        } finally {
+            //await client.end(); // closes connection
+        }
+    };
+    deleteBadUserTweets(userID, followerID).then((result) => {
+        if (result) {
+            console.log('User deleted');
+        }
+        //return res.json({ msg: "User is going to be deleted from your followers list" });
+    });
+
+
+    const deleteUserFollowersTable = async(userID, followerID) => {
+        try {
+            await client.query(`DELETE FROM "userFollowertable" WHERE followerid = $1`, [followerID]); // sends queries
+            return true;
+        } catch (error) {
+            console.error(error.stack);
+            return false;
+        } finally {
+            //await client.end(); // closes connection
+        }
+    };
+    deleteUserFollowersTable(userID, followerID).then((result) => {
+        if (result) {
+            console.log('User deleted');
+        }
+        //return res.json({ msg: "User is going to be deleted from your followers list" });
+    });
+
+    const deleteBadUserWords = async(userID, followerID) => {
+        try {
+            await client.query(`DELETE FROM "tableforBadWords" WHERE tweet_user_id = $1`, [followerID]); // sends queries
+            return true;
+        } catch (error) {
+            console.error(error.stack);
+            return false;
+        } finally {
+            //await client.end(); // closes connection
+        }
+    };
+    deleteBadUserWords(userID, followerID).then((result) => {
+        if (result) {
+            console.log('User deleted');
+        }
+        return res.json({ msg: "User is going to be deleted from your followers list" });
+    });
+
+
+});
 
 app.post("/CyberbullyFollowersRanking", async(req, resss) => {
     const { username } = req.body;
-    console.log(username);
     const getFile = fileName => {
         return new Promise((resolve, reject) => {
             var out = [];
@@ -659,24 +569,33 @@ app.post("/CyberbullyFollowersRanking", async(req, resss) => {
             pyProg.stderr.on('data', (data) => {
                 console.error('err: ', data.toString());
             });
-            setTimeout(resolve, 6000, out);
+            setTimeout(resolve, 20000, out);
         });
     };
 
     const Data_fromServer = async(dataRow) => {
+        var badWordUsage = {
+            'nodes': [
+                { 'id': 'Bacha', 'label': 'circle' },
+            ],
+            'edges': [{
+                'user': '',
+                'followerUsername': '',
+                'fuck': 0,
+                'bitch': 0,
+                'shit': 0,
+                'asshole': 0,
+                'motherfucker': 0,
+                'total_badWords': 0,
+                'location': '',
+                'latitude': '',
+                'longitude': '',
+                'tweet_usr_id': '',
+                'profile_image_url_https': ''
+            }]
+        }
         try {
             for (let row of dataRow) {
-                // badWordUsage['edges'].push({
-                //     'user': row.user,
-                //     'followerUsername': row.followerUsername,
-                //     'fuck': Number(row.fuck),
-                //     'bitch': Number(row.bitch),
-                //     'shit': Number(row.shit),
-                //     'asshole': Number(row.asshole),
-                //     'motherfucker': Number(row.motherfucker),
-                //     'total_badWords': Number(row.fuck) + Number(row.bitch) + Number(row.shit) + Number(row.asshole) + Number(row.motherfucker),
-                //     'location': row.location
-                // }, );
                 badWordUsage['edges'].push({
                     'user': row.user,
                     'followerUsername': row.followerUsername,
@@ -686,9 +605,12 @@ app.post("/CyberbullyFollowersRanking", async(req, resss) => {
                     'asshole': Number(Math.floor(Math.random() * 50)),
                     'motherfucker': Number(Math.floor(Math.random() * 50)),
                     'total_badWords': Number(row.fuck) + Number(row.bitch) + Number(row.shit) + Number(row.asshole) + Number(row.motherfucker),
-                    'location': row.location
+                    'location': row.location,
+                    'latitude': row.latitude,
+                    'longitude': row.long,
+                    'tweet_usr_id': row.tweet_user_id,
+                    'profile_image_url_https': row.profile_image_url_https
                 }, );
-                //console.log(row);
             }
             return badWordUsage;
         } catch (error) {
@@ -698,31 +620,34 @@ app.post("/CyberbullyFollowersRanking", async(req, resss) => {
     };
 
     const UserCyberBullyReport = async(username) => {
-        try {
-            client.query(`SELECT * FROM "tableforBadWords" WHERE "user" =$1 `, [username], (err, results) => {});
-            return true;
-        } catch (error) {
-            console.log("Query Error", error);
-            return false;
-        } finally {}
+        const row = await client.query(`SELECT * from "tableforBadWords" WHERE "user" = $1`, [username]);
+        // console.log(row.rows.length);
+        // console.log(row);
+        if (row.rows.length > 0) {
+            return 0;
+        } else {
+            return -1;
+        }
+
+
     };
 
     UserCyberBullyReport(username).then(result => {
-        if (result) {
+        if (result === 0) {
             console.log('User exist...');
             client.query(`SELECT * FROM "tableforBadWords"`, (err, res) => {
                 if (err) {
                     console.error(err);
                     return;
                 }
-                Data_fromServer(res.rows).then(result => {
-                    if (result) {
+                Data_fromServer(res.rows).then(resultttt => {
+                    if (resultttt) {
                         console.log('data crowl properply');
-                        badWordUsage['nodes'].shift();
-                        badWordUsage['edges'].shift();
-                        console.log(badWordUsage);
+                        resultttt['nodes'].shift();
+                        resultttt['edges'].shift();
+                        //console.log(resultttt);
 
-                        return resss.json({ msg: badWordUsage });
+                        return resss.json({ msg: resultttt });
                     } else {
                         console.log('data crowl not properply');
                     }
@@ -730,12 +655,29 @@ app.post("/CyberbullyFollowersRanking", async(req, resss) => {
             });
             // badWordUsage['edges'].shift();
 
-
         } else {
             console.log("This email is New ");
             getFile()
                 .then(data => {
-                    return resss.json({ msg: "Your report is going to be ready now" });
+                    client.query(`SELECT * FROM "tableforBadWords"`, (err, res) => {
+                        if (err) {
+                            console.error(err);
+                            return;
+                        }
+                        Data_fromServer(res.rows).then(result => {
+                            if (result) {
+                                console.log('data crowl properply');
+                                badWordUsage['nodes'].shift();
+                                badWordUsage['edges'].shift();
+                                //console.log(badWordUsage);
+
+                                return resss.json({ msg: badWordUsage });
+                            } else {
+                                console.log('data crowl not properply');
+                            }
+                        });
+                    });
+                    // return resss.json({ msg: "Your report is going to be ready now" });
                 })
                 .catch(err => console.error(err));
 
@@ -744,7 +686,102 @@ app.post("/CyberbullyFollowersRanking", async(req, resss) => {
 });
 
 
+const TwitterAPis = async(username) => {
+    try {
+        var SizeofFollowers;
+        await getTwitterFollowers(tokens, username).then(followers => {
+            SizeofFollowers = followers;
+        });
+        return SizeofFollowers;
+    } catch (error) {
+        console.error(error.stack);
+        return false;
+    } finally {
+        // await client.end(); // closes connection
+    }
+};
 
+app.post("/twitterlogUserInfo", async(req, res) => {
+    const { userID, username, displayName, photoURL, friends_count, followers_count, time_zone, favourites_count, verified } = req.body;
+    const CountFollowers = async() => {
+        try {
+            const { rows } = await client.query(`Select * from "userFollowertable"`);
+            var totalFollowers = 0;
+            for (var i = 0; i < rows.length; i++) {
+                totalFollowers = totalFollowers + 1
+            }
+            return totalFollowers;
+        } catch (error) {
+            console.error(error.stack);
+            return 0;
+        } finally {
+            // await client.end(); // closes connection
+        }
+    };
+
+    const InsertFollowers = async(followers, userID, getthis) => {
+        try {
+            console.log("Store all infromation of followers in database")
+            for (var i = 0; i < followers.length; i++) {
+                //console.log(followers[i]['screen_name']);
+                await client.query(
+                    `INSERT INTO "userFollowertable"("userTwitterid", "Twitterusername","followername","followerid",
+                    "followers_count","friends_count","retweeted_count","created_at","favourites_count",
+                    "statuses_count","verified_account","profile_image_url_https") 
+                    VALUES('${userID}', '${getthis}','${followers[i]['screen_name']}','${followers[i]['id_str']}',
+                    '${followers[i]['followers_count']}','${followers[i]['friends_count']}',
+                    '${followers[i]['status']['retweet_count']}','${followers[i]['created_at']}',
+                    '${followers[i]['favourites_count']}','${followers[i]['statuses_count']}',
+                    '${followers[i]['verified']}','${followers[i]['profile_image_url_https']}')`); // sends queries
+            }
+            return true;
+        } catch (error) {
+            console.error(error.stack);
+            return false;
+        } finally {
+            // await client.end(); // closes connection
+        }
+    };
+
+
+    const insertUser = async(userID, username, displayName, photoURL, friends_count, followers_count, time_zone, favourites_count, verified) => {
+        try {
+            await client.query(
+                `INSERT INTO twitterregistered("Twitterid", "Twitterusername","displayName","photoURL",friends_count,followers_count,time_zone,favourites_count,verified) VALUES('${userID}', '${username}','${displayName}','${photoURL}','${Number(friends_count)}','${Number(followers_count)}','${time_zone}','${Number(favourites_count)}','${verified}')`); // sends queries
+            return true;
+        } catch (error) {
+            //console.error(error);
+            return false;
+        } finally {
+            // await client.end(); // closes connection
+        }
+    };
+    insertUser(userID, username, displayName, photoURL, friends_count, followers_count, time_zone, favourites_count, verified).then(result => {
+        if (result) {
+            console.log('User singup first time crawl followers...');
+            TwitterAPis(username).then(UserFollowerss => {
+                console.log('All Followers List Return ');
+                // console.log(UserFollowerss);
+                InsertFollowers(UserFollowerss, userID, username).then(finish => {
+                    if (finish) {
+                        CountFollowers().then(totalFollowers => {
+                            console.log("User have registred and followers stored in database show welcome page on smartphone");
+                            return res.json({ msg: "Welcome to Twitter Ranking", totalFollowr: totalFollowers });
+                        })
+                    }
+                })
+
+            });
+        } else {
+            CountFollowers().then(totalFollowers => {
+                console.log("User have already account redirect to welcome page on smartphone");
+                return res.json({ msg: "Welcome to Twitter Ranking", totalFollowr: totalFollowers });
+            })
+        }
+    });
+
+
+});
 
 
 app.post("/AppRegistereScreen", async(req, res) => {
@@ -809,19 +846,6 @@ app.post("/AppLoginScreen", async(req, res) => {
 
 
 
-
-// async function getData() {
-//     fetch('http://3.39.102.69:5000/get_user/TwitterDev')
-//         .then(response => response.json())
-//         .then(data => {
-//             console.log(data)
-//         })
-//         .catch(err => {
-//             console.log(err)
-//         })
-// }
-
-// getData();
 
 const { Console } = require('console');
 app.listen(8000, () => {
