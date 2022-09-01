@@ -300,10 +300,10 @@ var rankingbyRetweetListToApp = {
     }]
 }
 var tokens = {
-    consumer_key: 'xxxx',
-    consumer_secret: 'xxxxx',
+    consumer_key: 'xxx',
+    consumer_secret: 'xxxx',
     access_token: 'xxx-xxx',
-    access_token_secret: 'xxxxxx'
+    access_token_secret: 'xxx'
 };
 
 
@@ -586,6 +586,11 @@ app.post("/CyberbullyFollowersRanking", async(req, resss) => {
                 'shit': 0,
                 'asshole': 0,
                 'motherfucker': 0,
+                'pussy': 5,
+                'bastard': 6,
+                'stupid': 7,
+                'bullshit': 8,
+                'idiot': 9,
                 'total_badWords': 0,
                 'location': '',
                 'latitude': '',
@@ -604,12 +609,19 @@ app.post("/CyberbullyFollowersRanking", async(req, resss) => {
                     'shit': Number(Math.floor(Math.random() * 50)),
                     'asshole': Number(Math.floor(Math.random() * 50)),
                     'motherfucker': Number(Math.floor(Math.random() * 50)),
+                    'pussy': Number(Math.floor(Math.random() * 50)),
+                    'bastard': Number(Math.floor(Math.random() * 50)),
+                    'stupid': Number(Math.floor(Math.random() * 50)),
+                    'bullshit': Number(Math.floor(Math.random() * 50)),
+                    'idiot': Number(Math.floor(Math.random() * 50)),
                     'total_badWords': Number(row.fuck) + Number(row.bitch) + Number(row.shit) + Number(row.asshole) + Number(row.motherfucker),
                     'location': row.location,
                     'latitude': row.latitude,
-                    'longitude': row.long,
+                    'longitude': row.longitude,
                     'tweet_usr_id': row.tweet_user_id,
-                    'profile_image_url_https': row.profile_image_url_https
+                    'profile_image_url_https': row.profile_image_url_https,
+                    'tweet_user_followers_count': row.tweet_user_followers_count,
+                    'tweet_user_following_count': row.tweet_user_following_count
                 }, );
             }
             return badWordUsage;
@@ -664,14 +676,14 @@ app.post("/CyberbullyFollowersRanking", async(req, resss) => {
                             console.error(err);
                             return;
                         }
-                        Data_fromServer(res.rows).then(result => {
-                            if (result) {
+                        Data_fromServer(res.rows).then(resultttt => {
+                            if (resultttt) {
                                 console.log('data crowl properply');
-                                badWordUsage['nodes'].shift();
-                                badWordUsage['edges'].shift();
+                                resultttt['nodes'].shift();
+                                resultttt['edges'].shift();
                                 //console.log(badWordUsage);
 
-                                return resss.json({ msg: badWordUsage });
+                                return resss.json({ msg: resultttt });
                             } else {
                                 console.log('data crowl not properply');
                             }
